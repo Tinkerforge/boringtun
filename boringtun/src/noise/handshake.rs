@@ -14,7 +14,7 @@ use chacha20poly1305::XChaCha20Poly1305;
 use rand_core::OsRng;
 use ring::aead::{Aad, LessSafeKey, Nonce, UnboundKey, CHACHA20_POLY1305};
 use std::convert::TryInto;
-use std::time::{Duration, SystemTime};
+use std::time::Duration;
 
 #[cfg(feature = "mock-instant")]
 use mock_instant::Instant;
@@ -175,9 +175,21 @@ struct TimeStamper {
 impl TimeStamper {
     /// Create a new TimeStamper
     pub fn new() -> TimeStamper {
+        #[cfg(target_family = "wasm")]
+        use wasm_timer::SystemTime;
+
+        #[cfg(not(target_family = "wasm"))]
+        use std::time::SystemTime;
+
+        #[cfg(target_family = "wasm")]
+        let epoch = wasm_timer::UNIX_EPOCH;
+
+        #[cfg(not(target_family = "wasm"))]
+        let epoch = SystemTime::UNIX_EPOCH;
+
         TimeStamper {
             duration_at_start: SystemTime::now()
-                .duration_since(SystemTime::UNIX_EPOCH)
+                .duration_since(epoch)
                 .unwrap(),
             instant_at_start: Instant::now(),
         }

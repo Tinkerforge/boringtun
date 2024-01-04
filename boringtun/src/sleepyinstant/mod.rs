@@ -8,10 +8,13 @@ mod windows;
 #[cfg(target_os = "windows")]
 use windows as inner;
 
-#[cfg(unix)]
+#[cfg(all(unix, not(target_family = "wasm")))]
 mod unix;
-#[cfg(unix)]
+#[cfg(all(unix, not(target_family = "wasm")))]
 use unix as inner;
+
+#[cfg(target_family = "wasm")]
+use wasm_timer as inner;
 
 /// A measurement of a monotonically nondecreasing clock.
 /// Opaque and useful only with [`Duration`].
