@@ -13,8 +13,11 @@ mod unix;
 #[cfg(all(unix, not(target_family = "wasm")))]
 use unix as inner;
 
+
 #[cfg(target_family = "wasm")]
-use wasm_timer as inner;
+mod wasm;
+#[cfg(target_family = "wasm")]
+use wasm as inner;
 
 /// A measurement of a monotonically nondecreasing clock.
 /// Opaque and useful only with [`Duration`].
