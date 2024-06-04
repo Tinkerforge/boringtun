@@ -241,6 +241,12 @@ impl Tunn {
         }
     }
 
+    pub fn clear_sessions(&mut self) {
+        for s in &mut self.sessions {
+            *s = None;
+        }
+    }
+
     /// Encapsulate a single packet from the tunnel interface.
     /// Returns TunnResult.
     ///
