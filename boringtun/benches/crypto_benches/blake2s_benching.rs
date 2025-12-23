@@ -1,7 +1,7 @@
 use blake2::digest::{FixedOutput, KeyInit};
 use blake2::{Blake2s256, Blake2sMac, Digest};
 use criterion::{BenchmarkId, Criterion, Throughput};
-use rand_core::{OsRng, RngCore};
+use rand_core::{OsRng, TryRngCore};
 
 pub fn bench_blake2s_hash(c: &mut Criterion) {
     let mut group = c.benchmark_group("blake2s_hash");
@@ -39,7 +39,7 @@ pub fn bench_blake2s_hmac(c: &mut Criterion) {
             b.iter_batched(
                 || {
                     let mut key = [0u8; 32];
-                    OsRng.fill_bytes(&mut key);
+                    OsRng.try_fill_bytes(&mut key).unwrap();
                     key
                 },
                 |key| {
@@ -71,7 +71,7 @@ pub fn bench_blake2s_keyed(c: &mut Criterion) {
             b.iter_batched(
                 || {
                     let mut key = [0u8; 16];
-                    OsRng.fill_bytes(&mut key);
+                    OsRng.try_fill_bytes(&mut key).unwrap();
                     key
                 },
                 |key| -> [u8; 16] {

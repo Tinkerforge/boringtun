@@ -1,6 +1,6 @@
 use aead::{AeadInPlace, KeyInit};
 use criterion::{BenchmarkId, Criterion, Throughput};
-use rand_core::{OsRng, RngCore};
+use rand_core::{OsRng, TryRngCore};
 
 fn chacha20poly1305_encrypt(key_bytes: &[u8], buf: &mut [u8]) {
     let len = buf.len();
@@ -33,8 +33,8 @@ pub fn bench_chacha20poly1305(c: &mut Criterion) {
 
                 let mut rng = OsRng::default();
 
-                rng.fill_bytes(&mut key);
-                rng.fill_bytes(&mut buf);
+                rng.try_fill_bytes(&mut key).unwrap();
+                rng.try_fill_bytes(&mut buf).unwrap();
 
                 b.iter(|| chacha20poly1305_encrypt(&key, &mut buf));
             },

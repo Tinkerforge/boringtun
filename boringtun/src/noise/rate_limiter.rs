@@ -14,7 +14,7 @@ use aead::generic_array::GenericArray;
 use aead::{AeadInPlace, KeyInit};
 use chacha20poly1305::{Key, XChaCha20Poly1305};
 use parking_lot::Mutex;
-use rand_core::{OsRng, RngCore};
+use rand_core::{OsRng, TryRngCore};
 use subtle::ConstantTimeEq;
 
 const COOKIE_REFRESH: u64 = 128; // Use 128 and not 120 so the compiler can optimize out the division
@@ -54,7 +54,7 @@ pub struct RateLimiter {
 impl RateLimiter {
     pub fn new(public_key: &crate::x25519::PublicKey, limit: u64) -> Self {
         let mut secret_key = [0u8; 16];
-        OsRng.fill_bytes(&mut secret_key);
+        OsRng.try_fill_bytes(&mut secret_key).unwrap();
         RateLimiter {
             nonce_key: Self::rand_bytes(),
             secret_key,
@@ -70,7 +70,7 @@ impl RateLimiter {
 
     fn rand_bytes() -> [u8; 32] {
         let mut key = [0u8; 32];
-        OsRng.fill_bytes(&mut key);
+        OsRng.try_fill_bytes(&mut key).unwrap();
         key
     }
 
