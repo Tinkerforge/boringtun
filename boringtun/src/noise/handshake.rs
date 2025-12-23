@@ -180,9 +180,7 @@ impl TimeStamper {
         let epoch = SystemTime::UNIX_EPOCH;
 
         TimeStamper {
-            duration_at_start: SystemTime::now()
-                .duration_since(epoch)
-                .unwrap(),
+            duration_at_start: SystemTime::now().duration_since(epoch).unwrap(),
             instant_at_start: Instant::now(),
         }
     }
@@ -526,7 +524,12 @@ impl Handshake {
         )?;
 
         use subtle::ConstantTimeEq;
-        if !bool::from(self.params.peer_static_public.as_bytes().ct_eq(&peer_static_public_decrypted)) {
+        if !bool::from(
+            self.params
+                .peer_static_public
+                .as_bytes()
+                .ct_eq(&peer_static_public_decrypted),
+        ) {
             return Err(WireGuardError::WrongKey);
         }
 

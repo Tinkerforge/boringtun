@@ -13,7 +13,6 @@ mod unix;
 #[cfg(all(unix, not(target_family = "wasm")))]
 use unix as inner;
 
-
 #[cfg(target_family = "wasm")]
 mod wasm;
 #[cfg(target_family = "wasm")]

@@ -24,21 +24,17 @@ pub fn bench_chacha20poly1305(c: &mut Criterion) {
     for size in [128, 192, 1400, 8192] {
         group.throughput(Throughput::Bytes(size as u64));
 
-        group.bench_with_input(
-            BenchmarkId::new("chacha20poly1305", size),
-            &size,
-            |b, i| {
-                let mut key = [0; 32];
-                let mut buf = vec![0; i + 16];
+        group.bench_with_input(BenchmarkId::new("chacha20poly1305", size), &size, |b, i| {
+            let mut key = [0; 32];
+            let mut buf = vec![0; i + 16];
 
-                let mut rng = OsRng::default();
+            let mut rng = OsRng::default();
 
-                rng.try_fill_bytes(&mut key).unwrap();
-                rng.try_fill_bytes(&mut buf).unwrap();
+            rng.try_fill_bytes(&mut key).unwrap();
+            rng.try_fill_bytes(&mut buf).unwrap();
 
-                b.iter(|| chacha20poly1305_encrypt(&key, &mut buf));
-            },
-        );
+            b.iter(|| chacha20poly1305_encrypt(&key, &mut buf));
+        });
     }
 
     group.finish();
